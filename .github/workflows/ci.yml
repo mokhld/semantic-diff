@@ -22,7 +22,7 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: .venv
-          key: venv-lint-${{ hashFiles('**/poetry.lock') }}
+          key: venv-lint-py3.11-${{ hashFiles('poetry.lock') }}
       - run: poetry install --no-interaction --with dev
       - name: Run pre-commit
         run: poetry run pre-commit run --all-files
@@ -42,7 +42,7 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: .venv
-          key: venv-typecheck-${{ hashFiles('**/poetry.lock') }}
+          key: venv-typecheck-py3.11-${{ hashFiles('poetry.lock') }}
       - run: poetry install --no-interaction --with dev
       - run: poetry run mypy src/
 
@@ -55,7 +55,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
-        id: setup-python
         with:
           python-version: ${{ matrix.python-version }}
       - uses: snok/install-poetry@v1
@@ -65,6 +64,6 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: .venv
-          key: venv-test-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
+          key: venv-test-py${{ matrix.python-version }}-${{ hashFiles('poetry.lock') }}
       - run: poetry install --no-interaction --with dev
       - run: poetry run pytest
