@@ -1,0 +1,121 @@
+# Source: https://python-poetry.org/docs/pyproject/ (Poetry 2.x)
+# Source: https://docs.astral.sh/ruff/configuration/
+# Source: https://mypy.readthedocs.io/en/stable/config_file.html
+
+[build-system]
+requires = ["poetry-core>=2.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[project]
+name = "semantic-diff"
+version = "0.1.0"
+description = "Semantic similarity scoring for JSON structures"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [
+    { name = "Mohammed Khalid", email = "mokhld@users.noreply.github.com" },
+]
+keywords = ["json", "similarity", "semantic", "diff"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Typing :: Typed",
+]
+dependencies = [
+    "numpy>=1.26",
+    "scipy>=1.12",
+    "cachetools>=7.0",
+]
+
+[project.optional-dependencies]
+fastembed = ["fastembed>=0.3"]
+openai = ["openai>=1.0", "tenacity>=9.0"]
+langsmith = ["langsmith>=0.1"]
+braintrust = ["braintrust>=0.0.100"]
+weave = ["weave>=0.50"]
+
+[project.entry-points.pytest11]
+semantic-diff = "semantic_diff.integrations._pytest_plugin"
+
+[tool.poetry]
+requires-poetry = ">=2.0"
+packages = [
+    { include = "semantic_diff", from = "src" },
+]
+
+[tool.poetry.group.dev.dependencies]
+pytest = ">=8.0"
+mypy = ">=1.19"
+ruff = ">=0.15"
+pre-commit = ">=3.6"
+types-cachetools = "^6.2.0.20251022"
+pytest-benchmark = "^5.2.3"
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "UP", "B", "SIM", "PT", "RUF"]
+ignore = [
+    "E501",   # line too long — handled by formatter
+    "B008",   # function calls in default args
+    "SIM108", # ternary vs if/else — discretion call
+]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+"tests/**/*.py" = ["PT011"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+warn_unused_ignores = true
+warn_unreachable = true
+show_error_codes = true
+mypy_path = "src"
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+disallow_untyped_calls = false
+
+[[tool.mypy.overrides]]
+module = "fastembed"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "openai"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "tenacity"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "langsmith"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "langsmith.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "braintrust"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "weave"
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = ["--import-mode=importlib", "-v"]
