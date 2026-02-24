@@ -9,8 +9,8 @@ from __future__ import annotations
 
 import pytest
 
-from semantic_diff.algorithm.config import STEDConfig
-from semantic_diff.scorer import ConsistencyScorer
+from json_semantic_diff.algorithm.config import STEDConfig
+from json_semantic_diff.scorer import ConsistencyScorer
 
 
 class TestConsistencyScorerEdgeCases:
@@ -116,21 +116,21 @@ class TestConsistencyScoreAPIFunction:
 
     def test_api_consistency_score_identical(self) -> None:
         """consistency_score() returns 1.0 for identical documents."""
-        from semantic_diff.api import consistency_score
+        from json_semantic_diff.api import consistency_score
 
         result = consistency_score([{"a": 1}, {"a": 1}])
         assert result == pytest.approx(1.0)
 
     def test_api_consistency_score_different(self) -> None:
         """consistency_score() returns < 0.5 for structurally different documents."""
-        from semantic_diff.api import consistency_score
+        from json_semantic_diff.api import consistency_score
 
         result = consistency_score([{"a": 1}, {"z": 99}])
         assert result < 0.5
 
     def test_api_consistency_score_with_config(self) -> None:
         """consistency_score() accepts config parameter without error."""
-        from semantic_diff.api import consistency_score
+        from json_semantic_diff.api import consistency_score
 
         config = STEDConfig()
         # Should not raise any exception

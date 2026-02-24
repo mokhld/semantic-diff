@@ -1,4 +1,4 @@
-"""pytest plugin for semantic-diff.
+"""pytest plugin for json-semantic-diff.
 
 Auto-discovered by pytest via the pytest11 entry point declared in pyproject.toml.
 When the package is installed (even in editable mode), pytest discovers this plugin
@@ -13,7 +13,7 @@ from typing import Any
 
 import pytest
 
-from semantic_diff import STEDConfig, compare
+from json_semantic_diff import STEDConfig, compare
 
 
 @pytest.fixture(scope="session")

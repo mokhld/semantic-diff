@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from semantic_diff.tree.normalizer import KeyNormalizer
+from json_semantic_diff.tree.normalizer import KeyNormalizer
 
 # Module-level singleton — KeyNormalizer is stateless, safe to share.
 _normalizer = KeyNormalizer()
@@ -71,7 +71,7 @@ class StaticBackend:
 
     Example::
 
-        from semantic_diff.backends import StaticBackend
+        from json_semantic_diff.backends import StaticBackend
 
         backend = StaticBackend()
         backend.similarity("user_name", "userName")   # 1.0

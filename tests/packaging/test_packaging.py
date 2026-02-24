@@ -1,4 +1,4 @@
-"""Packaging correctness verification for semantic-diff.
+"""Packaging correctness verification for json-semantic-diff.
 
 Tests validate PACK-04 requirements:
 - Base install has no ImportError from optional backends
@@ -25,52 +25,52 @@ PROJECT_ROOT = Path(__file__).parent.parent.parent
 class TestBaseInstallNoImportError:
     """Verify base install does not raise ImportError from optional backends."""
 
-    def test_import_semantic_diff(self):  # type: ignore[no-untyped-def]
+    def test_import_json_semantic_diff(self):  # type: ignore[no-untyped-def]
         """Top-level import succeeds."""
-        import semantic_diff
+        import json_semantic_diff
 
-        assert hasattr(semantic_diff, "compare")
-        assert hasattr(semantic_diff, "is_equivalent")
-        assert hasattr(semantic_diff, "similarity_score")
-        assert hasattr(semantic_diff, "consistency_score")
+        assert hasattr(json_semantic_diff, "compare")
+        assert hasattr(json_semantic_diff, "is_equivalent")
+        assert hasattr(json_semantic_diff, "similarity_score")
+        assert hasattr(json_semantic_diff, "consistency_score")
 
     def test_compare_basic(self):  # type: ignore[no-untyped-def]
         """compare() works with default StaticBackend."""
-        from semantic_diff import compare
+        from json_semantic_diff import compare
 
         result = compare({"a": 1}, {"a": 1})
         assert result.similarity_score == 1.0
 
     def test_is_equivalent_basic(self):  # type: ignore[no-untyped-def]
         """is_equivalent() works with default StaticBackend."""
-        from semantic_diff import is_equivalent
+        from json_semantic_diff import is_equivalent
 
         assert is_equivalent({"a": 1}, {"a": 1})
 
     def test_similarity_score_basic(self):  # type: ignore[no-untyped-def]
         """similarity_score() works with default StaticBackend."""
-        from semantic_diff import similarity_score
+        from json_semantic_diff import similarity_score
 
         score = similarity_score({"a": 1}, {"a": 1})
         assert score == 1.0
 
     def test_no_fastembed_import_on_base(self):  # type: ignore[no-untyped-def]
-        """Importing semantic_diff does not trigger fastembed import."""
-        import semantic_diff
+        """Importing json_semantic_diff does not trigger fastembed import."""
+        import json_semantic_diff
 
         # If fastembed is not installed, this confirms no ImportError.
         # If fastembed IS installed (dev env), this still passes.
-        assert hasattr(semantic_diff, "compare")
+        assert hasattr(json_semantic_diff, "compare")
 
     def test_no_openai_import_on_base(self):  # type: ignore[no-untyped-def]
-        """Importing semantic_diff does not trigger openai import."""
-        import semantic_diff
+        """Importing json_semantic_diff does not trigger openai import."""
+        import json_semantic_diff
 
-        assert hasattr(semantic_diff, "compare")
+        assert hasattr(json_semantic_diff, "compare")
 
     def test_backends_import(self):  # type: ignore[no-untyped-def]
         """backends package imports successfully with StaticBackend available."""
-        from semantic_diff.backends import StaticBackend
+        from json_semantic_diff.backends import StaticBackend
 
         backend = StaticBackend()
         sim = backend.similarity("user_name", "userName")
@@ -115,32 +115,32 @@ class TestWheelContents:
     def test_all_source_modules_in_wheel(self, wheel_path: Path):  # type: ignore[no-untyped-def]
         """All source modules must be present in the wheel."""
         expected_modules = [
-            "semantic_diff/__init__.py",
-            "semantic_diff/api.py",
-            "semantic_diff/comparator.py",
-            "semantic_diff/result.py",
-            "semantic_diff/cache.py",
-            "semantic_diff/scorer.py",
-            "semantic_diff/protocols.py",
-            "semantic_diff/algorithm/__init__.py",
-            "semantic_diff/algorithm/config.py",
-            "semantic_diff/algorithm/costs.py",
-            "semantic_diff/algorithm/matcher.py",
-            "semantic_diff/algorithm/normalizer.py",
-            "semantic_diff/algorithm/sted.py",
-            "semantic_diff/backends/__init__.py",
-            "semantic_diff/backends/static.py",
-            "semantic_diff/backends/fastembed.py",
-            "semantic_diff/backends/openai.py",
-            "semantic_diff/tree/__init__.py",
-            "semantic_diff/tree/builder.py",
-            "semantic_diff/tree/nodes.py",
-            "semantic_diff/tree/normalizer.py",
-            "semantic_diff/integrations/__init__.py",
-            "semantic_diff/integrations/_pytest_plugin.py",
-            "semantic_diff/integrations/_langsmith.py",
-            "semantic_diff/integrations/_braintrust.py",
-            "semantic_diff/integrations/_weave.py",
+            "json_semantic_diff/__init__.py",
+            "json_semantic_diff/api.py",
+            "json_semantic_diff/comparator.py",
+            "json_semantic_diff/result.py",
+            "json_semantic_diff/cache.py",
+            "json_semantic_diff/scorer.py",
+            "json_semantic_diff/protocols.py",
+            "json_semantic_diff/algorithm/__init__.py",
+            "json_semantic_diff/algorithm/config.py",
+            "json_semantic_diff/algorithm/costs.py",
+            "json_semantic_diff/algorithm/matcher.py",
+            "json_semantic_diff/algorithm/normalizer.py",
+            "json_semantic_diff/algorithm/sted.py",
+            "json_semantic_diff/backends/__init__.py",
+            "json_semantic_diff/backends/static.py",
+            "json_semantic_diff/backends/fastembed.py",
+            "json_semantic_diff/backends/openai.py",
+            "json_semantic_diff/tree/__init__.py",
+            "json_semantic_diff/tree/builder.py",
+            "json_semantic_diff/tree/nodes.py",
+            "json_semantic_diff/tree/normalizer.py",
+            "json_semantic_diff/integrations/__init__.py",
+            "json_semantic_diff/integrations/_pytest_plugin.py",
+            "json_semantic_diff/integrations/_langsmith.py",
+            "json_semantic_diff/integrations/_braintrust.py",
+            "json_semantic_diff/integrations/_weave.py",
         ]
         with zipfile.ZipFile(wheel_path) as zf:
             names = zf.namelist()
@@ -156,8 +156,8 @@ class TestWheelContents:
             assert metadata_files, "No METADATA found in wheel"
             metadata = zf.read(metadata_files[0]).decode()
             assert (
-                "semantic-diff" in metadata.lower()
-                or "semantic_diff" in metadata.lower()
+                "json-semantic-diff" in metadata.lower()
+                or "json_semantic_diff" in metadata.lower()
             )
             assert "0.1.0" in metadata
 
@@ -166,7 +166,7 @@ class TestPytestPluginDiscovery:
     """Verify the pytest plugin is discoverable."""
 
     def test_entry_point_registered(self):  # type: ignore[no-untyped-def]
-        """pytest11 entry point must be registered for semantic-diff."""
+        """pytest11 entry point must be registered for json-semantic-diff."""
         from importlib.metadata import entry_points
 
         pytest11_eps = entry_points(group="pytest11")
@@ -177,7 +177,7 @@ class TestPytestPluginDiscovery:
             if "semantic" in ep.name.lower() or "semantic" in str(ep.value).lower()
         ]
         assert sd_eps, (
-            f"No pytest11 entry point found for semantic-diff. "
+            f"No pytest11 entry point found for json-semantic-diff. "
             f"Available: {[ep.name for ep in pytest11_eps]}"
         )
 
@@ -185,7 +185,7 @@ class TestPytestPluginDiscovery:
         """assert_json_equivalent fixture must be importable from plugin."""
         import importlib
 
-        mod = importlib.import_module("semantic_diff.integrations._pytest_plugin")
+        mod = importlib.import_module("json_semantic_diff.integrations._pytest_plugin")
         assert hasattr(mod, "assert_json_equivalent")
         assert callable(mod.assert_json_equivalent)
 
@@ -207,13 +207,13 @@ class TestPackageMetadata:
 
     def test_version(self):  # type: ignore[no-untyped-def]
         """Package version must be 0.1.0."""
-        import semantic_diff
+        import json_semantic_diff
 
-        assert semantic_diff.__version__ == "0.1.0"
+        assert json_semantic_diff.__version__ == "0.1.0"
 
     def test_all_exports(self):  # type: ignore[no-untyped-def]
         """__all__ must include the documented public API."""
-        import semantic_diff
+        import json_semantic_diff
 
         expected = {
             "ArrayComparisonMode",
@@ -225,7 +225,7 @@ class TestPackageMetadata:
             "is_equivalent",
             "similarity_score",
         }
-        actual = set(semantic_diff.__all__)
+        actual = set(json_semantic_diff.__all__)
         assert expected == actual, (
             f"Missing: {expected - actual}, Extra: {actual - expected}"
         )

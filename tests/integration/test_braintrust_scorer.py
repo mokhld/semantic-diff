@@ -11,8 +11,8 @@ from typing import Any
 
 import pytest
 
-from semantic_diff.comparator import STEDComparator
-from semantic_diff.integrations._braintrust import BraintrustScorer
+from json_semantic_diff.comparator import STEDComparator
+from json_semantic_diff.integrations._braintrust import BraintrustScorer
 
 
 class TestBraintrustScorer:

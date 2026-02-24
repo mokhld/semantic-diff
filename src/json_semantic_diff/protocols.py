@@ -1,4 +1,4 @@
-"""EmbeddingBackend Protocol for semantic-diff backend extension point.
+"""EmbeddingBackend Protocol for json-semantic-diff backend extension point.
 
 Defines the structural interface all embedding backends must satisfy.
 Users can plug in custom backends without inheriting from any base class —
@@ -7,7 +7,7 @@ any class with a conformant ``embed`` method passes ``isinstance`` checks.
 Example::
 
     import numpy as np
-    from semantic_diff.protocols import EmbeddingBackend
+    from json_semantic_diff.protocols import EmbeddingBackend
 
     class MyBackend:
         def embed(self, strings: list[str]) -> np.ndarray:

@@ -7,11 +7,11 @@ The ``fastembed`` package is only required when ``FastEmbedBackend`` is
 
 Install the optional dependency with::
 
-    pip install semantic-diff[fastembed]
+    pip install json-semantic-diff[fastembed]
 
 Example::
 
-    from semantic_diff.backends.fastembed import FastEmbedBackend
+    from json_semantic_diff.backends.fastembed import FastEmbedBackend
 
     backend = FastEmbedBackend()
     vecs = backend.embed(["user_name", "address"])
@@ -65,7 +65,7 @@ class FastEmbedBackend:
         except ImportError as exc:
             raise ImportError(
                 "fastembed is required for FastEmbedBackend. "
-                "Install it with: pip install semantic-diff[fastembed]"
+                "Install it with: pip install json-semantic-diff[fastembed]"
             ) from exc
 
         # Use Any annotation to avoid NameError when fastembed is absent at

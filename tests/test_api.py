@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from semantic_diff import (
+from json_semantic_diff import (
     ArrayComparisonMode,
     ComparisonResult,
     STEDComparator,

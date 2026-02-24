@@ -1,4 +1,4 @@
-"""Performance benchmark suite for semantic-diff.
+"""Performance benchmark suite for json-semantic-diff.
 
 Validates PACK-03 timing targets using the StaticBackend:
 - 10-key flat objects: <10ms
@@ -11,7 +11,7 @@ Skip during normal test runs: pytest --benchmark-disable
 
 from __future__ import annotations
 
-from semantic_diff import compare
+from json_semantic_diff import compare
 
 
 class TestPerformance10Key:

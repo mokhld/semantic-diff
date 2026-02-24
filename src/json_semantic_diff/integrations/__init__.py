@@ -1,4 +1,4 @@
-"""Integrations subpackage for semantic-diff.
+"""Integrations subpackage for json-semantic-diff.
 
 Contains integration adapters for external frameworks:
 - pytest plugin (auto-discovered via pytest11 entry point)
@@ -16,21 +16,21 @@ from __future__ import annotations
 __all__: list[str] = []
 
 # BraintrustScorer has no SDK dependency — always importable.
-from semantic_diff.integrations._braintrust import BraintrustScorer
+from json_semantic_diff.integrations._braintrust import BraintrustScorer
 
 __all__.append("BraintrustScorer")
 
-# LangSmith requires the langsmith SDK (pip install semantic-diff[langsmith]).
+# LangSmith requires the langsmith SDK (pip install json-semantic-diff[langsmith]).
 try:
-    from semantic_diff.integrations._langsmith import LangSmithEvaluator
+    from json_semantic_diff.integrations._langsmith import LangSmithEvaluator
 
     __all__.append("LangSmithEvaluator")
 except ImportError:
     pass
 
-# Weave requires the weave SDK (pip install semantic-diff[weave]).
+# Weave requires the weave SDK (pip install json-semantic-diff[weave]).
 try:
-    from semantic_diff.integrations._weave import WeaveScorer
+    from json_semantic_diff.integrations._weave import WeaveScorer
 
     __all__.append("WeaveScorer")
 except ImportError:

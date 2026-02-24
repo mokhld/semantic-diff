@@ -10,8 +10,8 @@ from __future__ import annotations
 
 import numpy as np
 
-from semantic_diff.backends import StaticBackend
-from semantic_diff.protocols import EmbeddingBackend
+from json_semantic_diff.backends import StaticBackend
+from json_semantic_diff.protocols import EmbeddingBackend
 
 
 class _UserBackend:

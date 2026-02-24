@@ -7,7 +7,7 @@ requires = ["poetry-core>=2.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [project]
-name = "semantic-diff"
+name = "json-semantic-diff"
 version = "0.1.0"
 description = "Semantic similarity scoring for JSON structures"
 readme = "README.md"
@@ -40,12 +40,12 @@ braintrust = ["braintrust>=0.0.100"]
 weave = ["weave>=0.50"]
 
 [project.entry-points.pytest11]
-semantic-diff = "semantic_diff.integrations._pytest_plugin"
+json-semantic-diff = "json_semantic_diff.integrations._pytest_plugin"
 
 [tool.poetry]
 requires-poetry = ">=2.0"
 packages = [
-    { include = "semantic_diff", from = "src" },
+    { include = "json_semantic_diff", from = "src" },
 ]
 
 [tool.poetry.group.dev.dependencies]

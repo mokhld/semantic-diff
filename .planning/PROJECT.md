@@ -1,4 +1,4 @@
-# semantic-diff
+# json-semantic-diff
 
 ## What This Is
 
@@ -64,7 +64,7 @@ Tech stack: Python >=3.11, Poetry 2.x, numpy + scipy core deps, optional fastemb
 
 - **Python version**: >=3.11 (numpy 2.x + scipy 1.12+ compatibility)
 - **Core dependencies**: numpy + scipy + cachetools only — no ML frameworks in base install
-- **Embedding backends**: Optional extras via `pip install semantic-diff[fastembed]` etc.
+- **Embedding backends**: Optional extras via `pip install json-semantic-diff[fastembed]` etc.
 - **Build system**: Poetry (poetry-core)
 - **License**: MIT
 
@@ -78,7 +78,7 @@ Tech stack: Python >=3.11, Poetry 2.x, numpy + scipy core deps, optional fastemb
 | scipy.optimize.linear_sum_assignment for Hungarian | Handles rectangular matrices, maximize=True, optimized C++ | ✓ Good |
 | object→key→value tree structure (JEDI-style) | Enables key-level matching distinct from value-level matching | ✓ Good |
 | Core deps = numpy + scipy only | Keeps base install lightweight; ML backends as extras | ✓ Good |
-| Package name: semantic-diff | Clear purpose, memorable | ✓ Good |
+| Package name: json-semantic-diff | Clear purpose, memorable | ✓ Good |
 | all-MiniLM-L6-v2 over bge-small-en-v1.5 | bge-small failed discrimination benchmark (gap 0.16 < 0.25 threshold) | ✓ Good |
 | Poetry 2.x PEP 621 (not Hatchling) | Project initialized with Poetry; consistent tooling throughout | ✓ Good |
 | requires-python >=3.11 | numpy 2.x + scipy 1.12+ incompatible with 3.10 | ✓ Good |

@@ -18,9 +18,9 @@ from dataclasses import FrozenInstanceError
 
 import pytest
 
-from semantic_diff.algorithm.config import ArrayComparisonMode, STEDConfig
-from semantic_diff.algorithm.costs import _content_distance
-from semantic_diff.tree.nodes import NodeType, TreeNode
+from json_semantic_diff.algorithm.config import ArrayComparisonMode, STEDConfig
+from json_semantic_diff.algorithm.costs import _content_distance
+from json_semantic_diff.tree.nodes import NodeType, TreeNode
 
 # ---------------------------------------------------------------------------
 # Helpers

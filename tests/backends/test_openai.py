@@ -27,8 +27,8 @@ openai = pytest.importorskip("openai", reason="openai extra not installed")
 
 import httpx  # noqa: E402
 
-from semantic_diff.backends.openai import OpenAIBackend  # noqa: E402
-from semantic_diff.protocols import EmbeddingBackend  # noqa: E402
+from json_semantic_diff.backends.openai import OpenAIBackend  # noqa: E402
+from json_semantic_diff.protocols import EmbeddingBackend  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -103,8 +103,8 @@ def backend(monkeypatch: pytest.MonkeyPatch) -> OpenAIBackend:
 
 
 def test_import_from_backends_package() -> None:
-    """``from semantic_diff.backends import OpenAIBackend`` succeeds (SC1)."""
-    from semantic_diff.backends import OpenAIBackend as _OAB
+    """``from json_semantic_diff.backends import OpenAIBackend`` succeeds (SC1)."""
+    from json_semantic_diff.backends import OpenAIBackend as _OAB
 
     assert _OAB is OpenAIBackend
 
@@ -261,12 +261,12 @@ def test_import_error_message(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(builtins, "__import__", mock_import)
 
     # Reload module so the lazy import runs fresh inside __init__
-    import semantic_diff.backends.openai as mod
+    import json_semantic_diff.backends.openai as mod
 
     importlib.reload(mod)
 
     monkeypatch.setenv("OPENAI_API_KEY", "sk-test-fake-key")
-    with pytest.raises(ImportError, match=r"pip install semantic-diff\[openai\]"):
+    with pytest.raises(ImportError, match=r"pip install json-semantic-diff\[openai\]"):
         mod.OpenAIBackend()
 
 
@@ -361,7 +361,7 @@ def test_client_max_retries_zero(monkeypatch: pytest.MonkeyPatch) -> None:
         mock_client = MagicMock()
         mock_openai_class.return_value = mock_client
 
-        import semantic_diff.backends.openai as mod
+        import json_semantic_diff.backends.openai as mod
 
         importlib.reload(mod)
         _b = mod.OpenAIBackend()

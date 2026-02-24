@@ -9,7 +9,7 @@ Verifies:
 
 import pytest
 
-from semantic_diff.tree.nodes import NodeType, TreeNode
+from json_semantic_diff.tree.nodes import NodeType, TreeNode
 
 
 class TestNodeType:

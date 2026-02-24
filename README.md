@@ -1,4 +1,4 @@
-# semantic-diff
+# json-semantic-diff
 
 **Semantic similarity scoring for JSON structures — not just whether they differ, but *how similar* they are.**
 
@@ -9,9 +9,9 @@
 
 ## Overview
 
-`semantic-diff` compares two JSON documents and returns a normalised similarity score in [0.0, 1.0], along with an audit trail of which keys matched, which were renamed, and which are missing. It handles naming convention differences (camelCase, snake_case, PascalCase, kebab-case) transparently.
+`json-semantic-diff` compares two JSON documents and returns a normalised similarity score in [0.0, 1.0], along with an audit trail of which keys matched, which were renamed, and which are missing. It handles naming convention differences (camelCase, snake_case, PascalCase, kebab-case) transparently.
 
-Traditional JSON diff tools are binary: match or no match. `semantic-diff` tells you *how similar* two documents are, which is what you actually need when testing LLM outputs, validating API migrations, or measuring generator stability.
+Traditional JSON diff tools are binary: match or no match. `json-semantic-diff` tells you *how similar* two documents are, which is what you actually need when testing LLM outputs, validating API migrations, or measuring generator stability.
 
 Core algorithm: **STED** (Semantic Tree Edit Distance) — tree edit distance extended with semantic key matching via the Hungarian algorithm and per-level normalisation.
 
@@ -29,22 +29,22 @@ Core algorithm: **STED** (Semantic Tree Edit Distance) — tree edit distance ex
 ## Installation
 
 ```bash
-pip install semantic-diff
+pip install json-semantic-diff
 ```
 
 With optional backends:
 
 ```bash
-pip install semantic-diff[fastembed]   # Local ONNX embeddings (384-dim)
-pip install semantic-diff[openai]      # OpenAI cloud embeddings (1536-dim)
+pip install json-semantic-diff[fastembed]   # Local ONNX embeddings (384-dim)
+pip install json-semantic-diff[openai]      # OpenAI cloud embeddings (1536-dim)
 ```
 
 With evaluation platform adapters:
 
 ```bash
-pip install semantic-diff[langsmith]
-pip install semantic-diff[braintrust]
-pip install semantic-diff[weave]
+pip install json-semantic-diff[langsmith]
+pip install json-semantic-diff[braintrust]
+pip install json-semantic-diff[weave]
 ```
 
 ## Quick Start
@@ -52,7 +52,7 @@ pip install semantic-diff[weave]
 ### Compare two JSON documents
 
 ```python
-from semantic_diff import compare
+from json_semantic_diff import compare
 
 result = compare(
     {"user_name": "Alice", "email_address": "alice@corp.com"},
@@ -69,7 +69,7 @@ print(result.computation_time_ms)  # 0.5
 ### Quick similarity score
 
 ```python
-from semantic_diff import similarity_score
+from json_semantic_diff import similarity_score
 
 score = similarity_score(
     {"first_name": "Bob", "last_name": "Smith"},
@@ -81,7 +81,7 @@ print(score)  # 0.97
 ### Boolean equivalence check
 
 ```python
-from semantic_diff import is_equivalent
+from json_semantic_diff import is_equivalent
 
 # Passes — naming convention difference only
 is_equivalent({"user_name": "Alice"}, {"userName": "Alice"})  # True
@@ -96,7 +96,7 @@ is_equivalent({"user_name": "Alice"}, {"userName": "Alice"}, threshold=0.99)
 ### Measure generator consistency
 
 ```python
-from semantic_diff import consistency_score
+from json_semantic_diff import consistency_score
 
 # Stable generator → 1.0
 docs = [
@@ -144,7 +144,7 @@ Returned by `compare()`. Frozen dataclass with six fields:
 Immutable configuration for the algorithm. All parameters have sensible defaults.
 
 ```python
-from semantic_diff import STEDConfig, ArrayComparisonMode
+from json_semantic_diff import STEDConfig, ArrayComparisonMode
 
 config = STEDConfig(
     w_s=0.5,                                          # Structural weight [0, 1]
@@ -190,7 +190,7 @@ Three embedding backends for key matching, each optimising for different constra
 Uses Levenshtein edit distance on normalised keys. No ML model, no API calls.
 
 ```python
-from semantic_diff.backends import StaticBackend
+from json_semantic_diff.backends import StaticBackend
 
 backend = StaticBackend()
 backend.similarity("user_name", "userName")   # 1.0
@@ -202,8 +202,8 @@ backend.similarity("user_name", "address")    # < 0.5
 Local ONNX embeddings via `sentence-transformers/all-MiniLM-L6-v2` (384-dim).
 
 ```python
-from semantic_diff.backends.fastembed import FastEmbedBackend
-from semantic_diff.comparator import STEDComparator
+from json_semantic_diff.backends.fastembed import FastEmbedBackend
+from json_semantic_diff.comparator import STEDComparator
 
 backend = FastEmbedBackend()  # ~1-2s cold start for model loading
 cmp = STEDComparator(backend=backend)
@@ -215,8 +215,8 @@ result = cmp.compare(doc1, doc2)
 Cloud embeddings via `text-embedding-3-small` (1536-dim). API key from `OPENAI_API_KEY` environment variable.
 
 ```python
-from semantic_diff.backends.openai import OpenAIBackend
-from semantic_diff.comparator import STEDComparator
+from json_semantic_diff.backends.openai import OpenAIBackend
+from json_semantic_diff.comparator import STEDComparator
 
 backend = OpenAIBackend()  # Reads OPENAI_API_KEY from env
 cmp = STEDComparator(backend=backend)
@@ -230,7 +230,7 @@ Auto-retries rate-limited requests with jittered exponential backoff (up to 6 at
 For batch comparisons where you want cache reuse across calls:
 
 ```python
-from semantic_diff.comparator import STEDComparator
+from json_semantic_diff.comparator import STEDComparator
 
 cmp = STEDComparator()  # Or with backend= and config=
 for doc in documents:
@@ -256,7 +256,7 @@ def test_api_response(assert_json_equivalent):
 Custom threshold and config:
 
 ```python
-from semantic_diff import STEDConfig
+from json_semantic_diff import STEDConfig
 
 def test_strict(assert_json_equivalent):
     config = STEDConfig(type_coercion=True)
@@ -278,8 +278,8 @@ AssertionError: JSON documents not equivalent:
 ### LangSmith
 
 ```python
-from semantic_diff.comparator import STEDComparator
-from semantic_diff.integrations import LangSmithEvaluator
+from json_semantic_diff.comparator import STEDComparator
+from json_semantic_diff.integrations import LangSmithEvaluator
 
 comparator = STEDComparator()
 evaluator = LangSmithEvaluator(comparator, output_key="response")
@@ -289,8 +289,8 @@ evaluator = LangSmithEvaluator(comparator, output_key="response")
 ### Braintrust
 
 ```python
-from semantic_diff.comparator import STEDComparator
-from semantic_diff.integrations import BraintrustScorer
+from json_semantic_diff.comparator import STEDComparator
+from json_semantic_diff.integrations import BraintrustScorer
 
 comparator = STEDComparator()
 scorer = BraintrustScorer(comparator)
@@ -300,8 +300,8 @@ scorer = BraintrustScorer(comparator)
 ### W&B Weave
 
 ```python
-from semantic_diff.comparator import STEDComparator
-from semantic_diff.integrations import WeaveScorer
+from json_semantic_diff.comparator import STEDComparator
+from json_semantic_diff.integrations import WeaveScorer
 
 comparator = STEDComparator()
 scorer = WeaveScorer(comparator)
@@ -340,8 +340,8 @@ Each `STEDComparator` instance owns its own cache (no global state). The public 
 ## Development
 
 ```bash
-git clone https://github.com/mokhld/semantic-diff.git
-cd semantic-diff
+git clone https://github.com/mokhld/json-semantic-diff.git
+cd json-semantic-diff
 poetry install --with dev
 ```
 
@@ -370,7 +370,7 @@ poetry run ruff format src/ tests/
 ### Project structure
 
 ```
-src/semantic_diff/
+src/json_semantic_diff/
 ├── __init__.py              # Public API exports
 ├── api.py                   # 4 public functions
 ├── comparator.py            # STEDComparator orchestrator

@@ -27,7 +27,7 @@ import pathlib
 import pytest
 from scipy.stats import pearsonr
 
-from semantic_diff import compare
+from json_semantic_diff import compare
 
 FIXTURES_DIR = pathlib.Path(__file__).parent / "fixtures"
 

@@ -7,8 +7,8 @@ Re-exports the public API for the tree module:
 - TreeBuilder: converts any valid JSON value into a typed TreeNode tree
 """
 
-from semantic_diff.tree.builder import TreeBuilder
-from semantic_diff.tree.nodes import NodeType, TreeNode
-from semantic_diff.tree.normalizer import KeyNormalizer
+from json_semantic_diff.tree.builder import TreeBuilder
+from json_semantic_diff.tree.nodes import NodeType, TreeNode
+from json_semantic_diff.tree.normalizer import KeyNormalizer
 
 __all__ = ["KeyNormalizer", "NodeType", "TreeBuilder", "TreeNode"]

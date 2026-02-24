@@ -1,13 +1,13 @@
 """Integration tests for the public API surface.
 
-All imports are from the top-level ``semantic_diff`` package — never from
+All imports are from the top-level ``json_semantic_diff`` package — never from
 internal submodules.  Covers ComparisonResult richness, is_equivalent(),
 similarity_score(), config modes, and statelessness.
 """
 
 from __future__ import annotations
 
-from semantic_diff import (
+from json_semantic_diff import (
     ComparisonResult,
     STEDConfig,
     compare,

@@ -9,7 +9,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from semantic_diff.algorithm.matcher import hungarian_match
+from json_semantic_diff.algorithm.matcher import hungarian_match
 
 
 class TestEmptyMatrix:

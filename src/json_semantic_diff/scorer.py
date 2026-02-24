@@ -23,8 +23,8 @@ from typing import Any
 
 import numpy as np
 
-from semantic_diff.algorithm.config import STEDConfig
-from semantic_diff.comparator import STEDComparator
+from json_semantic_diff.algorithm.config import STEDConfig
+from json_semantic_diff.comparator import STEDComparator
 
 __all__ = ["ConsistencyScorer"]
 
@@ -41,7 +41,7 @@ class ConsistencyScorer:
 
     Example::
 
-        from semantic_diff.scorer import ConsistencyScorer
+        from json_semantic_diff.scorer import ConsistencyScorer
 
         scorer = ConsistencyScorer()
         docs = [{"user_name": "Alice"}, {"user_name": "Alice"}, {"user_name": "Alice"}]

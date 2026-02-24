@@ -1,1 +1,1 @@
-# Tests for the semantic_diff.algorithm package.
+# Tests for the json_semantic_diff.algorithm package.

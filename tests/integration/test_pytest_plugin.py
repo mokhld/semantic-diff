@@ -1,9 +1,9 @@
-"""Integration tests for the semantic-diff pytest plugin.
+"""Integration tests for the json-semantic-diff pytest plugin.
 
 These tests verify that the assert_json_equivalent fixture is auto-discovered
 via the pytest11 entry point and behaves correctly.
 
-NOTE: These tests require semantic-diff to be installed (even in editable mode
+NOTE: These tests require json-semantic-diff to be installed (even in editable mode
 via ``pip install -e .``). The pytest11 entry point is only registered at
 install time -- running from a raw source checkout without installing will not
 discover the fixture.
@@ -13,11 +13,12 @@ from __future__ import annotations
 
 import subprocess
 import sys
+from pathlib import Path
 from typing import Any
 
 import pytest
 
-from semantic_diff import STEDConfig
+from json_semantic_diff import STEDConfig
 
 
 def test_fixture_passes_equivalent_docs(assert_json_equivalent: Any) -> None:
@@ -78,7 +79,7 @@ def test_plugin_discovery() -> None:
         [sys.executable, "-m", "pytest", "--fixtures", "-q"],
         capture_output=True,
         text=True,
-        cwd="/Users/abusafiyyah/Projects/RESEARCH/semantic-diff",
+        cwd=str(Path(__file__).resolve().parents[2]),
     )
     assert "assert_json_equivalent" in result.stdout, (
         f"assert_json_equivalent not found in pytest --fixtures output.\n"

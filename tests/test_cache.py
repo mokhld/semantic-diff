@@ -18,8 +18,8 @@ from typing import Any
 import numpy as np
 import pytest
 
-from semantic_diff.backends import StaticBackend
-from semantic_diff.cache import EmbeddingCache
+from json_semantic_diff.backends import StaticBackend
+from json_semantic_diff.cache import EmbeddingCache
 
 # ---------------------------------------------------------------------------
 # Spy helper

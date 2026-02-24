@@ -15,11 +15,11 @@ is created with ``max_retries=0`` to prevent double-retry.
 
 Install the optional dependency with::
 
-    pip install semantic-diff[openai]
+    pip install json-semantic-diff[openai]
 
 Example::
 
-    from semantic_diff.backends.openai import OpenAIBackend
+    from json_semantic_diff.backends.openai import OpenAIBackend
 
     backend = OpenAIBackend()
     vecs = backend.embed(["user_name", "address"])
@@ -73,7 +73,7 @@ class OpenAIBackend:
         except ImportError as exc:
             raise ImportError(
                 "openai and tenacity are required for OpenAIBackend. "
-                "Install with: pip install semantic-diff[openai]"
+                "Install with: pip install json-semantic-diff[openai]"
             ) from exc
 
         self._model_name = model_name
