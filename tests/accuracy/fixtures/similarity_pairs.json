@@ -1,0 +1,371 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "created": "2026-02-23",
+    "description": "Human-judged similarity pairs for STED accuracy validation using StaticBackend",
+    "backend": "StaticBackend (Levenshtein on normalized keys)",
+    "pair_count": 45
+  },
+  "pairs": [
+    {
+      "id": "identical-simple",
+      "category": "identical",
+      "left": {"name": "Alice", "age": 30},
+      "right": {"name": "Alice", "age": 30},
+      "expected_score": 1.0,
+      "rationale": "Identical flat objects with same keys and values"
+    },
+    {
+      "id": "identical-nested",
+      "category": "identical",
+      "left": {"user": {"name": "Alice", "address": {"city": "NYC"}}},
+      "right": {"user": {"name": "Alice", "address": {"city": "NYC"}}},
+      "expected_score": 1.0,
+      "rationale": "Identical nested objects"
+    },
+    {
+      "id": "identical-array",
+      "category": "identical",
+      "left": {"items": [1, 2, 3]},
+      "right": {"items": [1, 2, 3]},
+      "expected_score": 1.0,
+      "rationale": "Identical objects with arrays"
+    },
+    {
+      "id": "identical-empty",
+      "category": "identical",
+      "left": {},
+      "right": {},
+      "expected_score": 1.0,
+      "rationale": "Both empty objects"
+    },
+    {
+      "id": "identical-single",
+      "category": "identical",
+      "left": {"key": "value"},
+      "right": {"key": "value"},
+      "expected_score": 1.0,
+      "rationale": "Identical single-key objects"
+    },
+    {
+      "id": "rename-user-name",
+      "category": "key_renaming",
+      "left": {"user_name": "Alice"},
+      "right": {"userName": "Alice"},
+      "expected_score": 1.0,
+      "rationale": "snake_case vs camelCase — identical after KeyNormalizer"
+    },
+    {
+      "id": "rename-first-name",
+      "category": "key_renaming",
+      "left": {"first_name": "Bob"},
+      "right": {"firstName": "Bob"},
+      "expected_score": 1.0,
+      "rationale": "snake_case vs camelCase — identical after KeyNormalizer"
+    },
+    {
+      "id": "rename-email-address",
+      "category": "key_renaming",
+      "left": {"email_address": "a@b.com"},
+      "right": {"emailAddress": "a@b.com"},
+      "expected_score": 1.0,
+      "rationale": "snake_case vs camelCase — identical after KeyNormalizer"
+    },
+    {
+      "id": "rename-created-at",
+      "category": "key_renaming",
+      "left": {"created_at": "2024"},
+      "right": {"createdAt": "2024"},
+      "expected_score": 1.0,
+      "rationale": "snake_case vs camelCase — identical after KeyNormalizer"
+    },
+    {
+      "id": "rename-phone-number",
+      "category": "key_renaming",
+      "left": {"phone_number": "555"},
+      "right": {"phoneNumber": "555"},
+      "expected_score": 1.0,
+      "rationale": "snake_case vs camelCase — identical after KeyNormalizer"
+    },
+    {
+      "id": "rename-is-active",
+      "category": "key_renaming",
+      "left": {"is_active": true},
+      "right": {"isActive": true},
+      "expected_score": 1.0,
+      "rationale": "snake_case vs camelCase — identical after KeyNormalizer"
+    },
+    {
+      "id": "rename-multi",
+      "category": "key_renaming",
+      "left": {"user_name": "A", "email_addr": "b"},
+      "right": {"userName": "A", "emailAddr": "b"},
+      "expected_score": 1.0,
+      "rationale": "Multiple snake_case vs camelCase keys — all identical after normalization"
+    },
+    {
+      "id": "rename-abbrev-addr",
+      "category": "key_renaming",
+      "left": {"addr": "123 Main"},
+      "right": {"address": "123 Main"},
+      "expected_score": 0.80,
+      "rationale": "Abbreviation difference — similar but not identical after normalization"
+    },
+    {
+      "id": "rename-abbrev-desc",
+      "category": "key_renaming",
+      "left": {"desc": "hello"},
+      "right": {"description": "hello"},
+      "expected_score": 0.70,
+      "rationale": "Abbreviation difference — moderate edit distance after normalization"
+    },
+    {
+      "id": "rename-abbrev-info",
+      "category": "key_renaming",
+      "left": {"info": "x"},
+      "right": {"information": "x"},
+      "expected_score": 0.70,
+      "rationale": "Abbreviation difference — moderate edit distance after normalization"
+    },
+    {
+      "id": "struct-extra-key",
+      "category": "structural_differences",
+      "left": {"a": 1, "b": 2},
+      "right": {"a": 1, "b": 2, "c": 3},
+      "expected_score": 0.65,
+      "rationale": "2 of 3 keys match — mostly similar with one extra key"
+    },
+    {
+      "id": "struct-missing-keys",
+      "category": "structural_differences",
+      "left": {"a": 1, "b": 2, "c": 3},
+      "right": {"a": 1},
+      "expected_score": 0.30,
+      "rationale": "Only 1 of 3 keys matches — significant structural difference"
+    },
+    {
+      "id": "struct-diff-values",
+      "category": "structural_differences",
+      "left": {"name": "Alice", "age": 30},
+      "right": {"name": "Bob", "age": 25},
+      "expected_score": 0.50,
+      "rationale": "Keys match perfectly but all values differ"
+    },
+    {
+      "id": "struct-nested-flat",
+      "category": "structural_differences",
+      "left": {"user": {"name": "Alice"}},
+      "right": {"name": "Alice"},
+      "expected_score": 0.05,
+      "rationale": "Nesting vs flat — completely different structure despite same data"
+    },
+    {
+      "id": "struct-array-len",
+      "category": "structural_differences",
+      "left": {"items": [1, 2, 3]},
+      "right": {"items": [1]},
+      "expected_score": 0.10,
+      "rationale": "Same key but array length difference — ordered mode penalizes heavily"
+    },
+    {
+      "id": "struct-mixed-changes",
+      "category": "structural_differences",
+      "left": {"name": "Alice", "email": "a@b.com", "age": 30, "city": "NYC"},
+      "right": {"nombre": "Alice", "email": "a@b.com", "years": 30},
+      "expected_score": 0.35,
+      "rationale": "Some keys renamed, some missing, some added — mixed changes"
+    },
+    {
+      "id": "struct-reorder-array",
+      "category": "structural_differences",
+      "left": {"items": [1, 2, 3]},
+      "right": {"items": [3, 2, 1]},
+      "expected_score": 0.10,
+      "rationale": "Reordered array elements — ordered mode treats as different"
+    },
+    {
+      "id": "struct-type-change",
+      "category": "structural_differences",
+      "left": {"count": 5},
+      "right": {"count": "five"},
+      "expected_score": 0.50,
+      "rationale": "Same key, value type mismatch (int vs string)"
+    },
+    {
+      "id": "struct-partial-overlap",
+      "category": "structural_differences",
+      "left": {"a": 1, "b": 2, "c": 3, "d": 4},
+      "right": {"a": 1, "b": 2, "e": 5, "f": 6},
+      "expected_score": 0.50,
+      "rationale": "Half keys match, half are different"
+    },
+    {
+      "id": "struct-empty-vs-pop",
+      "category": "structural_differences",
+      "left": {"data": {}},
+      "right": {"data": {"key": "val"}},
+      "expected_score": 0.10,
+      "rationale": "Same wrapper key but one is empty, one has content"
+    },
+    {
+      "id": "struct-arr-obj-partial",
+      "category": "structural_differences",
+      "left": {"users": [{"name": "A"}]},
+      "right": {"users": [{"name": "A"}, {"name": "B"}]},
+      "expected_score": 0.10,
+      "rationale": "Same key, array of objects with length difference"
+    },
+    {
+      "id": "struct-bool-int",
+      "category": "structural_differences",
+      "left": {"flag": true},
+      "right": {"flag": 1},
+      "expected_score": 0.90,
+      "rationale": "True == 1 in Python/JSON — nearly identical semantically"
+    },
+    {
+      "id": "struct-null-missing",
+      "category": "structural_differences",
+      "left": {"a": 1, "b": null},
+      "right": {"a": 1},
+      "expected_score": 0.45,
+      "rationale": "One key with null value vs missing — moderately different"
+    },
+    {
+      "id": "struct-five-vs-ten",
+      "category": "structural_differences",
+      "left": {"a": 1, "b": 2, "c": 3, "d": 4, "e": 5},
+      "right": {"a": 1, "b": 2, "c": 3, "d": 4, "e": 5, "f": 6, "g": 7, "h": 8, "i": 9, "j": 10},
+      "expected_score": 0.50,
+      "rationale": "5 of 10 keys match — half overlap"
+    },
+    {
+      "id": "struct-value-only-diff",
+      "category": "structural_differences",
+      "left": {"x": "hello", "y": "world"},
+      "right": {"x": "goodbye", "y": "earth"},
+      "expected_score": 0.50,
+      "rationale": "Keys identical, values completely different"
+    },
+    {
+      "id": "unrel-diff-keys",
+      "category": "unrelated",
+      "left": {"name": "Alice"},
+      "right": {"price": 99.99},
+      "expected_score": 0.10,
+      "rationale": "Completely different single keys — minimal overlap"
+    },
+    {
+      "id": "unrel-diff-struct",
+      "category": "unrelated",
+      "left": {"user": {"name": "x"}},
+      "right": {"items": [1, 2, 3]},
+      "expected_score": 0.0,
+      "rationale": "Different structures entirely — nested object vs array wrapper"
+    },
+    {
+      "id": "unrel-str-obj",
+      "category": "unrelated",
+      "left": "hello",
+      "right": {"greeting": "hello"},
+      "expected_score": 0.0,
+      "rationale": "String vs object — fundamentally different types"
+    },
+    {
+      "id": "unrel-num-obj",
+      "category": "unrelated",
+      "left": 42,
+      "right": {"answer": 42},
+      "expected_score": 0.0,
+      "rationale": "Number vs object — fundamentally different types"
+    },
+    {
+      "id": "unrel-empty-pop",
+      "category": "unrelated",
+      "left": {},
+      "right": {"a": 1, "b": 2, "c": 3},
+      "expected_score": 0.0,
+      "rationale": "Empty vs populated — no overlap possible"
+    },
+    {
+      "id": "unrel-arr-obj",
+      "category": "unrelated",
+      "left": [1, 2, 3],
+      "right": {"a": 1, "b": 2},
+      "expected_score": 0.0,
+      "rationale": "Array vs object — different JSON types"
+    },
+    {
+      "id": "unrel-large-disjoint",
+      "category": "unrelated",
+      "left": {"user": "a", "email": "b", "phone": "c", "age": "d", "city": "e"},
+      "right": {"product": "f", "price": "g", "stock": "h", "brand": "i", "sku": "j"},
+      "expected_score": 0.10,
+      "rationale": "5-key objects with completely different domains"
+    },
+    {
+      "id": "unrel-domains",
+      "category": "unrelated",
+      "left": {"first_name": "Alice", "last_name": "Smith", "email": "a@b.com"},
+      "right": {"product_id": "123", "price_usd": "9.99", "quantity": "5"},
+      "expected_score": 0.05,
+      "rationale": "User profile vs product data — semantically unrelated"
+    },
+    {
+      "id": "unrel-nested",
+      "category": "unrelated",
+      "left": {"user": {"profile": {"name": "A", "bio": "B"}}},
+      "right": {"order": {"items": {"id": "1", "qty": "2"}}},
+      "expected_score": 0.0,
+      "rationale": "Deeply nested user data vs order data — no overlap"
+    },
+    {
+      "id": "unrel-null-pop",
+      "category": "unrelated",
+      "left": null,
+      "right": {"key": "value"},
+      "expected_score": 0.0,
+      "rationale": "Null vs populated object — fundamentally different"
+    },
+    {
+      "id": "edge-both-null",
+      "category": "edge_cases",
+      "left": null,
+      "right": null,
+      "expected_score": 1.0,
+      "rationale": "Both null — identical"
+    },
+    {
+      "id": "edge-both-empty-arr",
+      "category": "edge_cases",
+      "left": [],
+      "right": [],
+      "expected_score": 1.0,
+      "rationale": "Both empty arrays — identical"
+    },
+    {
+      "id": "edge-single-vs-empty",
+      "category": "edge_cases",
+      "left": {"a": 1},
+      "right": {},
+      "expected_score": 0.0,
+      "rationale": "Single key vs empty — no overlap"
+    },
+    {
+      "id": "edge-deep-identical",
+      "category": "edge_cases",
+      "left": {"a": {"b": {"c": {"d": {"e": "val"}}}}},
+      "right": {"a": {"b": {"c": {"d": {"e": "val"}}}}},
+      "expected_score": 1.0,
+      "rationale": "Deeply nested identical structures"
+    },
+    {
+      "id": "edge-unicode",
+      "category": "edge_cases",
+      "left": {"nombre": "Alice"},
+      "right": {"nombre": "Alice"},
+      "expected_score": 1.0,
+      "rationale": "Unicode keys — identical"
+    }
+  ]
+}
