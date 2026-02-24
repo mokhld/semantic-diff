@@ -38,7 +38,7 @@ jobs:
         with:
           ref: main
           fetch-depth: 0
-          token: ${{ secrets.RELEASE_TOKEN }}
+          token: ${{ github.token }}
 
       - name: Bump version in pyproject.toml
         env:
