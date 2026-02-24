@@ -1,0 +1,335 @@
+"""STEDComparator: orchestrator that wires TreeBuilder + STEDAlgorithm + EmbeddingBackend.
+
+This is the central wiring layer between the raw algorithm and the
+public API.  It converts a raw float score into a rich ComparisonResult
+with matched pairs, key mappings, timing data, and null_equals_missing preprocessing.
+
+Architecture:
+- compare() starts a wall-clock timer, preprocesses inputs, builds trees for
+  match extraction, delegates scoring to STEDAlgorithm.compute(), extracts
+  KEY-level match data via Hungarian matching, and returns a ComparisonResult.
+- Trees are built TWICE: once internally by STEDAlgorithm.compute() (for scoring)
+  and once here (for match extraction).  This is intentional — the comparator
+  must not mutate the algorithm's internal state.
+- null_equals_missing=True is implemented as a preprocessing step that strips
+  None-valued keys from dicts before both the score computation and tree building.
+- Embedding results are cached via EmbeddingCache (LRU).  All unique KEY labels
+  from both trees are pre-warmed into the cache in a single embed() call before
+  the algorithm runs — guaranteeing one embed call per unique label set.
+"""
+
+from __future__ import annotations
+
+import time
+from typing import TYPE_CHECKING, Any
+
+import numpy as np
+
+from semantic_diff.algorithm.config import STEDConfig
+from semantic_diff.algorithm.matcher import hungarian_match
+from semantic_diff.algorithm.sted import STEDAlgorithm
+from semantic_diff.backends import StaticBackend
+from semantic_diff.cache import EmbeddingCache
+from semantic_diff.result import ComparisonResult
+from semantic_diff.tree.builder import TreeBuilder
+from semantic_diff.tree.nodes import NodeType, TreeNode
+
+if TYPE_CHECKING:
+    from semantic_diff.protocols import EmbeddingBackend
+
+__all__ = ["STEDComparator"]
+
+
+class STEDComparator:
+    """Orchestrator for semantic JSON comparison.
+
+    Wires ``TreeBuilder``, ``STEDAlgorithm``, and an ``EmbeddingBackend``
+    together into a single ``compare()`` call that returns a rich
+    ``ComparisonResult`` with similarity score, matched pairs, key mappings,
+    unmatched paths, and wall-clock timing.
+
+    Embedding results are automatically cached using an LRU cache.  The first
+    ``compare()`` call pre-warms the cache with all unique KEY labels from both
+    trees in a single ``embed()`` call.  Subsequent ``compare()`` calls on the
+    same documents produce **zero** backend embed calls.
+
+    Two separate ``STEDComparator`` instances never share cache state — each
+    instance maintains its own ``EmbeddingCache``.
+
+    Example::
+
+        from semantic_diff.comparator import STEDComparator
+
+        cmp = STEDComparator()
+        result = cmp.compare({"user_name": "Alice"}, {"userName": "Alice"})
+        print(result.similarity_score)   # > 0.85
+        print(result.key_mappings)       # {"user_name": "userName"}
+    """
+
+    def __init__(
+        self,
+        backend: EmbeddingBackend | None = None,
+        config: STEDConfig | None = None,
+        max_cache_size: int = 512,
+    ) -> None:
+        """Initialise the comparator.
+
+        Args:
+            backend: An EmbeddingBackend-conformant object.  Defaults to
+                ``StaticBackend()`` when None.
+            config:  Algorithm hyper-parameters.  Defaults to ``STEDConfig()``.
+            max_cache_size: Maximum number of string embeddings held in the
+                per-instance LRU cache.  When exceeded, the least-recently-used
+                entry is silently evicted.  Defaults to 512.
+                This is an infrastructure parameter — it is NOT part of
+                ``STEDConfig`` (which governs algorithm behaviour only).
+        """
+        self._config: STEDConfig = config if config is not None else STEDConfig()
+        raw_backend: Any = backend if backend is not None else StaticBackend()
+        self._backend: EmbeddingCache = EmbeddingCache(
+            raw_backend, max_size=max_cache_size
+        )
+        self._algorithm = STEDAlgorithm(backend=self._backend, config=self._config)
+        self._builder = TreeBuilder()
+
+    # ------------------------------------------------------------------
+    # Public API
+    # ------------------------------------------------------------------
+
+    def compare(self, left: Any, right: Any) -> ComparisonResult:
+        """Compare two JSON values and return a rich ComparisonResult.
+
+        The comparison is stateless with respect to the *algorithm*: calling
+        this method twice with the same inputs and config will always produce
+        identical result values.  (The cache is a performance detail that does
+        not affect correctness.)
+
+        Args:
+            left:  First JSON value (dict, list, str, int, float, bool, None).
+            right: Second JSON value.
+
+        Returns:
+            A ``ComparisonResult`` with all six fields populated.
+        """
+        t0 = time.perf_counter()
+
+        # Preprocess: strip None-valued keys when null_equals_missing=True
+        left = self._preprocess(left)
+        right = self._preprocess(right)
+
+        # Build trees ONCE for match extraction (STEDAlgorithm builds its own)
+        left_tree = self._builder.build(left)
+        right_tree = self._builder.build(right)
+
+        # Batch pre-warm the cache with all unique KEY labels.
+        # Collects every KEY node label from both trees and embeds them in a
+        # single backend call.  Subsequent algorithm.compute() and
+        # _walk_object_pair() calls will serve all embeddings/similarities
+        # from the warm cache — zero additional backend embed() calls.
+        all_labels = self._collect_key_labels(left_tree) | self._collect_key_labels(
+            right_tree
+        )
+        if all_labels:
+            self._backend.embed(
+                list(all_labels)
+            )  # populates cache; return value unused
+
+        # Score from algorithm (builds its own trees internally)
+        score = self._algorithm.compute(left, right)
+
+        # Extract KEY-level match data from our trees
+        matched_pairs, key_mappings, unmatched_left, unmatched_right = (
+            self._extract_key_matches(left_tree, right_tree)
+        )
+
+        elapsed_ms = (time.perf_counter() - t0) * 1000.0
+
+        return ComparisonResult(
+            similarity_score=score,
+            matched_pairs=matched_pairs,
+            key_mappings=key_mappings,
+            unmatched_left=unmatched_left,
+            unmatched_right=unmatched_right,
+            computation_time_ms=elapsed_ms,
+        )
+
+    # ------------------------------------------------------------------
+    # Preprocessing
+    # ------------------------------------------------------------------
+
+    def _preprocess(self, value: Any) -> Any:
+        """Strip None-valued keys when null_equals_missing=True.
+
+        When ``self._config.null_equals_missing`` is False, the value is
+        returned unchanged.  When True, recursively removes any dict entry
+        whose value is None, so that ``{"x": None}`` becomes ``{}`` and
+        therefore compares as identical to ``{}``.
+
+        Args:
+            value: Any valid JSON value.
+
+        Returns:
+            The preprocessed value (a new object — never mutates input).
+        """
+        if not self._config.null_equals_missing:
+            return value
+
+        if isinstance(value, dict):
+            return {k: self._preprocess(v) for k, v in value.items() if v is not None}
+        if isinstance(value, list):
+            return [self._preprocess(item) for item in value]
+        return value
+
+    # ------------------------------------------------------------------
+    # Cache pre-warming helpers
+    # ------------------------------------------------------------------
+
+    def _collect_key_labels(self, node: TreeNode) -> set[str]:
+        """Recursively collect all KEY node labels from a tree.
+
+        Uses ``node.label`` (normalized form) rather than ``node.raw_label``
+        because the algorithm's cost functions pass ``node.label`` to
+        ``backend.embed()`` / ``backend.similarity()``.  Pre-scanning with
+        the same strings ensures cache hits on every subsequent lookup.
+
+        Args:
+            node: Root (or any sub-root) of a JSON tree.
+
+        Returns:
+            Set of normalized label strings for every KEY node in the subtree.
+        """
+        labels: set[str] = set()
+        if node.node_type == NodeType.KEY:
+            labels.add(node.label)  # MUST use .label (normalized), NOT .raw_label
+        for child in node.children:
+            labels |= self._collect_key_labels(child)
+        return labels
+
+    # ------------------------------------------------------------------
+    # Match extraction
+    # ------------------------------------------------------------------
+
+    def _extract_key_matches(
+        self,
+        left_tree: TreeNode,
+        right_tree: TreeNode,
+    ) -> tuple[list[tuple[str, str]], dict[str, str], list[str], list[str]]:
+        """Extract KEY-level match data via Hungarian matching.
+
+        Recursively walks both trees simultaneously.  At each OBJECT node
+        pair, builds a cost matrix over KEY children using backend similarity,
+        runs Hungarian assignment, and collects matched/unmatched KEY paths.
+
+        Args:
+            left_tree:  Root of the left JSON tree.
+            right_tree: Root of the right JSON tree.
+
+        Returns:
+            A 4-tuple ``(matched_pairs, key_mappings, unmatched_left, unmatched_right)``:
+            - matched_pairs: List of ``(left_key_path, right_key_path)`` tuples.
+            - key_mappings:  Dict mapping raw left key name → raw right key name.
+            - unmatched_left:  JSON Pointer paths for unmatched left KEY nodes.
+            - unmatched_right: JSON Pointer paths for unmatched right KEY nodes.
+        """
+        matched_pairs: list[tuple[str, str]] = []
+        key_mappings: dict[str, str] = {}
+        unmatched_left: list[str] = []
+        unmatched_right: list[str] = []
+
+        self._walk_object_pair(
+            left_tree,
+            right_tree,
+            matched_pairs,
+            key_mappings,
+            unmatched_left,
+            unmatched_right,
+        )
+
+        return matched_pairs, key_mappings, unmatched_left, unmatched_right
+
+    def _walk_object_pair(
+        self,
+        left: TreeNode,
+        right: TreeNode,
+        matched_pairs: list[tuple[str, str]],
+        key_mappings: dict[str, str],
+        unmatched_left: list[str],
+        unmatched_right: list[str],
+    ) -> None:
+        """Recursively walk a pair of nodes, matching KEY children at OBJECT nodes.
+
+        Args:
+            left, right: Nodes at the same structural position in each tree.
+            matched_pairs, key_mappings, unmatched_left, unmatched_right:
+                Accumulator collections (mutated in place).
+        """
+        # Only process OBJECT/OBJECT pairs for KEY matching
+        if left.node_type != NodeType.OBJECT or right.node_type != NodeType.OBJECT:
+            return
+
+        left_keys = left.children  # KEY nodes
+        right_keys = right.children  # KEY nodes
+
+        # Edge case: both empty
+        if not left_keys and not right_keys:
+            return
+
+        # Edge case: one side empty
+        if not left_keys:
+            unmatched_right.extend(k.path for k in right_keys)
+            return
+        if not right_keys:
+            unmatched_left.extend(k.path for k in left_keys)
+            return
+
+        # Build cost matrix: distance(left_key_i, right_key_j) = 1 - similarity
+        m = len(left_keys)
+        n = len(right_keys)
+        cost_matrix = np.empty((m, n), dtype=float)
+
+        for i, ka in enumerate(left_keys):
+            for j, kb in enumerate(right_keys):
+                if hasattr(self._backend, "similarity"):
+                    key_sim = self._backend.similarity(ka.label, kb.label)
+                else:
+                    key_sim = 1.0  # fallback when backend has no similarity()
+                cost_matrix[i, j] = 1.0 - key_sim
+
+        row_ind, col_ind = hungarian_match(cost_matrix)
+
+        matched_left_indices = set(row_ind.tolist())
+        matched_right_indices = set(col_ind.tolist())
+
+        # Record matched pairs
+        for r, c in zip(row_ind.tolist(), col_ind.tolist(), strict=True):
+            lk = left_keys[r]
+            rk = right_keys[c]
+            matched_pairs.append((lk.path, rk.path))
+            key_mappings[lk.raw_label] = rk.raw_label
+
+            # Recurse into value children if both are OBJECT nodes
+            if lk.children and rk.children:
+                lk_val = lk.children[0]
+                rk_val = rk.children[0]
+                if (
+                    lk_val.node_type == NodeType.OBJECT
+                    and rk_val.node_type == NodeType.OBJECT
+                ):
+                    self._walk_object_pair(
+                        lk_val,
+                        rk_val,
+                        matched_pairs,
+                        key_mappings,
+                        unmatched_left,
+                        unmatched_right,
+                    )
+
+        # Unmatched left keys
+        for i in range(m):
+            if i not in matched_left_indices:
+                unmatched_left.append(left_keys[i].path)
+
+        # Unmatched right keys
+        for j in range(n):
+            if j not in matched_right_indices:
+                unmatched_right.append(right_keys[j].path)
