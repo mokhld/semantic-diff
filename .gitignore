@@ -1,0 +1,60 @@
+# Planning (GSD)
+.planning/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+*.egg
+.eggs/
+dist/
+build/
+sdist/
+wheels/
+*.whl
+
+# Virtual environment
+.venv/
+.venv-*/
+venv/
+
+# Coverage
+.coverage
+htmlcov/
+
+# mypy
+.mypy_cache/
+
+# ruff
+.ruff_cache/
+
+# pytest
+.pytest_cache/
+
+# Hypothesis (property-based testing)
+.hypothesis/
+
+# Test artefacts (end-to-end test outputs)
+.test-artefacts/
+
+# Content (marketing, articles, GTM)
+.content/
+
+# Build artefacts
+.artifacts/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.*
