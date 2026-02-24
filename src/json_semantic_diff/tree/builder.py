@@ -15,8 +15,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-from semantic_diff.tree.nodes import NodeType, TreeNode
-from semantic_diff.tree.normalizer import KeyNormalizer
+from json_semantic_diff.tree.nodes import NodeType, TreeNode
+from json_semantic_diff.tree.normalizer import KeyNormalizer
 
 # Module-level normalizer (stateless, safe to share across all TreeBuilder instances)
 _normalizer = KeyNormalizer()

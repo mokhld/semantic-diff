@@ -16,7 +16,7 @@ from dataclasses import FrozenInstanceError
 
 import pytest
 
-from semantic_diff.algorithm.config import ArrayComparisonMode, STEDConfig
+from json_semantic_diff.algorithm.config import ArrayComparisonMode, STEDConfig
 
 # ---------------------------------------------------------------------------
 # ArrayComparisonMode

@@ -13,8 +13,8 @@ fastembed = pytest.importorskip("fastembed", reason="fastembed extra not install
 
 import numpy as np  # noqa: E402
 
-from semantic_diff.backends.fastembed import FastEmbedBackend  # noqa: E402
-from semantic_diff.protocols import EmbeddingBackend  # noqa: E402
+from json_semantic_diff.backends.fastembed import FastEmbedBackend  # noqa: E402
+from json_semantic_diff.protocols import EmbeddingBackend  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # Module-scoped fixture — one ONNX warm-up for the whole module
@@ -161,7 +161,9 @@ def test_import_error_message(monkeypatch: pytest.MonkeyPatch) -> None:
         return real_import(name, *args, **kwargs)
 
     monkeypatch.setattr(builtins, "__import__", mock_import)
-    with pytest.raises(ImportError, match=r"pip install semantic-diff\[fastembed\]"):
+    with pytest.raises(
+        ImportError, match=r"pip install json-semantic-diff\[fastembed\]"
+    ):
         FastEmbedBackend()
 
 

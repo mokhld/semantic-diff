@@ -15,7 +15,7 @@ from dataclasses import FrozenInstanceError
 
 import pytest
 
-from semantic_diff.result import ComparisonResult
+from json_semantic_diff.result import ComparisonResult
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -216,11 +216,11 @@ class TestComparisonResultEquality:
 
 class TestComparisonResultExports:
     def test_all_exports_comparison_result(self) -> None:
-        import semantic_diff.result as mod
+        import json_semantic_diff.result as mod
 
         assert "ComparisonResult" in mod.__all__
 
     def test_importable_from_module(self) -> None:
-        from semantic_diff.result import ComparisonResult as CR
+        from json_semantic_diff.result import ComparisonResult as CR
 
         assert CR is ComparisonResult

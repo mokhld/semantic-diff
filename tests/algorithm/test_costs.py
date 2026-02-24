@@ -16,10 +16,10 @@ from __future__ import annotations
 
 import pytest
 
-from semantic_diff.algorithm.config import STEDConfig
-from semantic_diff.algorithm.costs import cost_delete, cost_insert, cost_update
-from semantic_diff.backends.static import StaticBackend
-from semantic_diff.tree.nodes import NodeType, TreeNode
+from json_semantic_diff.algorithm.config import STEDConfig
+from json_semantic_diff.algorithm.costs import cost_delete, cost_insert, cost_update
+from json_semantic_diff.backends.static import StaticBackend
+from json_semantic_diff.tree.nodes import NodeType, TreeNode
 
 # ---------------------------------------------------------------------------
 # Fixtures

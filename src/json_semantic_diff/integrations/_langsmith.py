@@ -1,4 +1,4 @@
-"""LangSmith evaluator adapter for semantic-diff.
+"""LangSmith evaluator adapter for json-semantic-diff.
 
 Provides a factory function ``LangSmithEvaluator`` that wraps an
 ``STEDComparator`` in the LangSmith evaluator interface (function-based
@@ -6,7 +6,7 @@ pattern).  The returned callable is compatible with ``langsmith.evaluate()``.
 
 Install the optional SDK dependency with::
 
-    pip install semantic-diff[langsmith]
+    pip install json-semantic-diff[langsmith]
 """
 
 from __future__ import annotations
@@ -14,7 +14,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    from semantic_diff.comparator import STEDComparator
+    from json_semantic_diff.comparator import STEDComparator
 
 __all__ = ["LangSmithEvaluator"]
 
@@ -49,7 +49,7 @@ def LangSmithEvaluator(
         from langsmith.evaluation.evaluator import EvaluationResult
     except ImportError as exc:
         raise ImportError(
-            "langsmith is required: pip install semantic-diff[langsmith]"
+            "langsmith is required: pip install json-semantic-diff[langsmith]"
         ) from exc
 
     def _evaluator(run: Any, example: Any = None) -> Any:

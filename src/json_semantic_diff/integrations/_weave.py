@@ -1,4 +1,4 @@
-"""W&B Weave scorer adapter for semantic-diff.
+"""W&B Weave scorer adapter for json-semantic-diff.
 
 Provides a factory function ``WeaveScorer`` that wraps an
 ``STEDComparator`` in the W&B Weave scorer interface (``weave.Scorer``
@@ -11,7 +11,7 @@ not at module import time.
 
 Install the optional SDK dependency with::
 
-    pip install semantic-diff[weave]
+    pip install json-semantic-diff[weave]
 """
 
 from __future__ import annotations
@@ -19,7 +19,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    from semantic_diff.comparator import STEDComparator
+    from json_semantic_diff.comparator import STEDComparator
 
 __all__ = ["WeaveScorer"]
 
@@ -51,7 +51,7 @@ def WeaveScorer(
         from weave import Scorer
     except ImportError as exc:
         raise ImportError(
-            "weave is required: pip install semantic-diff[weave]"
+            "weave is required: pip install json-semantic-diff[weave]"
         ) from exc
 
     class _WeaveSTEDScorer(Scorer):  # type: ignore[misc]

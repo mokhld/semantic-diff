@@ -13,11 +13,11 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
-from semantic_diff.algorithm.config import STEDConfig
-from semantic_diff.tree.nodes import NodeType, TreeNode
+from json_semantic_diff.algorithm.config import STEDConfig
+from json_semantic_diff.tree.nodes import NodeType, TreeNode
 
 if TYPE_CHECKING:
-    from semantic_diff.protocols import EmbeddingBackend
+    from json_semantic_diff.protocols import EmbeddingBackend
 
 
 def cost_insert(node: TreeNode) -> float:

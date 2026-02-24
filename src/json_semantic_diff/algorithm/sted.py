@@ -26,15 +26,15 @@ from typing import TYPE_CHECKING, Any
 
 import numpy as np
 
-from semantic_diff.algorithm.config import ArrayComparisonMode, STEDConfig
-from semantic_diff.algorithm.costs import cost_delete, cost_insert, cost_update
-from semantic_diff.algorithm.matcher import hungarian_match
-from semantic_diff.algorithm.normalizer import normalize_similarity
-from semantic_diff.tree.builder import TreeBuilder
-from semantic_diff.tree.nodes import NodeType, TreeNode
+from json_semantic_diff.algorithm.config import ArrayComparisonMode, STEDConfig
+from json_semantic_diff.algorithm.costs import cost_delete, cost_insert, cost_update
+from json_semantic_diff.algorithm.matcher import hungarian_match
+from json_semantic_diff.algorithm.normalizer import normalize_similarity
+from json_semantic_diff.tree.builder import TreeBuilder
+from json_semantic_diff.tree.nodes import NodeType, TreeNode
 
 if TYPE_CHECKING:
-    from semantic_diff.protocols import EmbeddingBackend
+    from json_semantic_diff.protocols import EmbeddingBackend
 
 
 class STEDAlgorithm:
@@ -46,8 +46,8 @@ class STEDAlgorithm:
 
     Example::
 
-        from semantic_diff.algorithm.sted import STEDAlgorithm
-        from semantic_diff.backends import StaticBackend
+        from json_semantic_diff.algorithm.sted import STEDAlgorithm
+        from json_semantic_diff.backends import StaticBackend
 
         algo = STEDAlgorithm(backend=StaticBackend())
         score = algo.compute({"user_name": "Alice"}, {"userName": "Alice"})

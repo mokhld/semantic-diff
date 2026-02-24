@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import pytest
 
-from semantic_diff import STEDConfig, consistency_score
+from json_semantic_diff import STEDConfig, consistency_score
 
 
 class TestSC1IdenticalDocuments:

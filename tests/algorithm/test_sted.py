@@ -15,9 +15,9 @@ from __future__ import annotations
 
 import pytest
 
-from semantic_diff.algorithm.config import ArrayComparisonMode, STEDConfig
-from semantic_diff.algorithm.sted import STEDAlgorithm
-from semantic_diff.backends.static import StaticBackend
+from json_semantic_diff.algorithm.config import ArrayComparisonMode, STEDConfig
+from json_semantic_diff.algorithm.sted import STEDAlgorithm
+from json_semantic_diff.backends.static import StaticBackend
 
 # ---------------------------------------------------------------------------
 # Fixtures

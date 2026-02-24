@@ -11,8 +11,8 @@ with each other.
 
 Example::
 
-    from semantic_diff.cache import EmbeddingCache
-    from semantic_diff.backends import StaticBackend
+    from json_semantic_diff.cache import EmbeddingCache
+    from json_semantic_diff.backends import StaticBackend
 
     backend = StaticBackend()
     cache = EmbeddingCache(backend, max_size=512)
@@ -32,7 +32,7 @@ import numpy as np
 from cachetools import LRUCache
 
 if TYPE_CHECKING:
-    from semantic_diff.protocols import EmbeddingBackend
+    from json_semantic_diff.protocols import EmbeddingBackend
 
 
 class EmbeddingCache:

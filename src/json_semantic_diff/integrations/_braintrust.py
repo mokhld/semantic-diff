@@ -1,4 +1,4 @@
-"""Braintrust scorer adapter for semantic-diff.
+"""Braintrust scorer adapter for json-semantic-diff.
 
 Provides a factory function ``BraintrustScorer`` that wraps an
 ``STEDComparator`` in the Braintrust scorer interface (plain function pattern).
@@ -7,7 +7,7 @@ No Braintrust SDK import is required — the scorer is a plain Python function
 with the signature that Braintrust expects.  Install Braintrust separately
 if you also need ``braintrust.Eval()`` runner support::
 
-    pip install semantic-diff[braintrust]
+    pip install json-semantic-diff[braintrust]
 """
 
 from __future__ import annotations
@@ -15,7 +15,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    from semantic_diff.comparator import STEDComparator
+    from json_semantic_diff.comparator import STEDComparator
 
 __all__ = ["BraintrustScorer"]
 

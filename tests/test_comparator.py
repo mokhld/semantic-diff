@@ -13,8 +13,8 @@ from __future__ import annotations
 
 import pytest
 
-from semantic_diff.algorithm.config import STEDConfig
-from semantic_diff.comparator import STEDComparator
+from json_semantic_diff.algorithm.config import STEDConfig
+from json_semantic_diff.comparator import STEDComparator
 
 # ---------------------------------------------------------------------------
 # Helpers

@@ -17,7 +17,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from semantic_diff.comparator import STEDComparator
+from json_semantic_diff.comparator import STEDComparator
 
 
 def _make_mock_weave() -> types.ModuleType:
@@ -41,14 +41,14 @@ def patch_weave(monkeypatch: pytest.MonkeyPatch) -> None:
     mock_w = _make_mock_weave()
     monkeypatch.setitem(sys.modules, "weave", mock_w)
     # Reload adapter so it picks up the patched sys.modules
-    import semantic_diff.integrations._weave as _weave_module
+    import json_semantic_diff.integrations._weave as _weave_module
 
     importlib.reload(_weave_module)
 
 
 def _get_scorer(comparator: STEDComparator) -> Any:
     """Import and call WeaveScorer after sys.modules is patched."""
-    from semantic_diff.integrations._weave import WeaveScorer
+    from json_semantic_diff.integrations._weave import WeaveScorer
 
     return WeaveScorer(comparator)
 
@@ -125,12 +125,14 @@ class TestWeaveScorer:
 
         monkeypatch.setattr(builtins, "__import__", _blocking_import)
 
-        import semantic_diff.integrations._weave as _weave_module
+        import json_semantic_diff.integrations._weave as _weave_module
 
         importlib.reload(_weave_module)
 
-        from semantic_diff.integrations._weave import WeaveScorer
+        from json_semantic_diff.integrations._weave import WeaveScorer
 
         comparator = STEDComparator()
-        with pytest.raises(ImportError, match="pip install semantic-diff\\[weave\\]"):
+        with pytest.raises(
+            ImportError, match="pip install json-semantic-diff\\[weave\\]"
+        ):
             WeaveScorer(comparator)

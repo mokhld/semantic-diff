@@ -17,7 +17,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from semantic_diff.comparator import STEDComparator
+from json_semantic_diff.comparator import STEDComparator
 
 
 def _make_mock_langsmith() -> types.ModuleType:
@@ -51,14 +51,14 @@ def patch_langsmith(monkeypatch: pytest.MonkeyPatch) -> None:
     )
     monkeypatch.setitem(sys.modules, "langsmith.schemas", mock_ls.schemas)
     # Reload adapter so it picks up the patched sys.modules
-    import semantic_diff.integrations._langsmith as _ls_module
+    import json_semantic_diff.integrations._langsmith as _ls_module
 
     importlib.reload(_ls_module)
 
 
 def _get_evaluator(comparator: STEDComparator, **kwargs: Any) -> Any:
     """Import and call LangSmithEvaluator after sys.modules is patched."""
-    from semantic_diff.integrations._langsmith import LangSmithEvaluator
+    from json_semantic_diff.integrations._langsmith import LangSmithEvaluator
 
     return LangSmithEvaluator(comparator, **kwargs)
 
@@ -158,14 +158,14 @@ class TestLangSmithEvaluator:
 
         monkeypatch.setattr(builtins, "__import__", _blocking_import)
 
-        import semantic_diff.integrations._langsmith as _ls_module
+        import json_semantic_diff.integrations._langsmith as _ls_module
 
         importlib.reload(_ls_module)
 
-        from semantic_diff.integrations._langsmith import LangSmithEvaluator
+        from json_semantic_diff.integrations._langsmith import LangSmithEvaluator
 
         comparator = STEDComparator()
         with pytest.raises(
-            ImportError, match="pip install semantic-diff\\[langsmith\\]"
+            ImportError, match="pip install json-semantic-diff\\[langsmith\\]"
         ):
             LangSmithEvaluator(comparator)

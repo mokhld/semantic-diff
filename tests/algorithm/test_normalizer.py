@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import pytest
 
-from semantic_diff.algorithm.normalizer import normalize_similarity
+from json_semantic_diff.algorithm.normalizer import normalize_similarity
 
 
 class TestNormalizeSimilarity:

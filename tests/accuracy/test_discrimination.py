@@ -32,8 +32,8 @@ pytest.importorskip(
     "fastembed", reason="fastembed extra not installed — skip accuracy tests"
 )
 
-from semantic_diff.backends.fastembed import FastEmbedBackend
-from semantic_diff.comparator import STEDComparator
+from json_semantic_diff.backends.fastembed import FastEmbedBackend
+from json_semantic_diff.comparator import STEDComparator
 
 
 @pytest.fixture(scope="module")

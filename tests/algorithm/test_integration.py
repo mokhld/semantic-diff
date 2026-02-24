@@ -1,7 +1,7 @@
 """End-to-end integration tests for Phase 4: STED Algorithm.
 
 Each test class maps directly to one of the six ROADMAP Phase 4 success
-criteria, verified through the *public* ``semantic_diff.algorithm`` interface.
+criteria, verified through the *public* ``json_semantic_diff.algorithm`` interface.
 
 Requirements covered:
 - ALGO-03: Accurate STED similarity (identity=1.0, naming > 0.85, break < 0.1)
@@ -11,7 +11,7 @@ Requirements covered:
 - ALGO-07: Unordered array mode
 - ALGO-09: Auto array mode heuristic
 
-All tests import from ``semantic_diff.algorithm`` (public API), never
+All tests import from ``json_semantic_diff.algorithm`` (public API), never
 from submodules directly.
 """
 
@@ -21,8 +21,8 @@ from typing import ClassVar
 
 import pytest
 
-from semantic_diff.algorithm import ArrayComparisonMode, STEDAlgorithm, STEDConfig
-from semantic_diff.backends import StaticBackend
+from json_semantic_diff.algorithm import ArrayComparisonMode, STEDAlgorithm, STEDConfig
+from json_semantic_diff.backends import StaticBackend
 
 # ---------------------------------------------------------------------------
 # Fixtures

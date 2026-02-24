@@ -13,8 +13,8 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from semantic_diff.backends import StaticBackend
-from semantic_diff.backends.static import _levenshtein_distance
+from json_semantic_diff.backends import StaticBackend
+from json_semantic_diff.backends.static import _levenshtein_distance
 
 # ---------------------------------------------------------------------------
 # Fixtures

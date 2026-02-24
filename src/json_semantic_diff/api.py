@@ -1,4 +1,4 @@
-"""Public API functions for semantic-diff.
+"""Public API functions for json-semantic-diff.
 
 This module provides the four user-facing functions: compare, consistency_score,
 is_equivalent, and similarity_score. Each call creates a fresh STEDComparator
@@ -9,10 +9,10 @@ from __future__ import annotations
 
 from typing import Any
 
-from semantic_diff.algorithm.config import STEDConfig
-from semantic_diff.comparator import STEDComparator
-from semantic_diff.result import ComparisonResult
-from semantic_diff.scorer import ConsistencyScorer
+from json_semantic_diff.algorithm.config import STEDConfig
+from json_semantic_diff.comparator import STEDComparator
+from json_semantic_diff.result import ComparisonResult
+from json_semantic_diff.scorer import ConsistencyScorer
 
 __all__ = ["compare", "consistency_score", "is_equivalent", "similarity_score"]
 

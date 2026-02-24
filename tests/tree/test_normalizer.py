@@ -9,7 +9,7 @@ Verifies all ROADMAP Phase 2 success criteria #3 normalization requirements:
 
 import pytest
 
-from semantic_diff.tree.normalizer import KeyNormalizer
+from json_semantic_diff.tree.normalizer import KeyNormalizer
 
 
 @pytest.fixture

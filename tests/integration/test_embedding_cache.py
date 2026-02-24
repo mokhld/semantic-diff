@@ -1,7 +1,7 @@
 """Integration tests for the embedding cache layer.
 
 Verifies cache warm-up, batch embedding, LRU eviction, and per-instance
-isolation. All imports use the top-level ``semantic_diff`` package — never
+isolation. All imports use the top-level ``json_semantic_diff`` package — never
 internal submodules.
 """
 
@@ -9,8 +9,8 @@ from __future__ import annotations
 
 from typing import Any
 
-from semantic_diff.backends import StaticBackend
-from semantic_diff.comparator import STEDComparator
+from json_semantic_diff.backends import StaticBackend
+from json_semantic_diff.comparator import STEDComparator
 
 
 class TestSC1_ZeroEmbedCallsOnSecondCompare:

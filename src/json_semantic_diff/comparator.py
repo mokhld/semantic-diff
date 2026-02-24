@@ -25,17 +25,17 @@ from typing import TYPE_CHECKING, Any
 
 import numpy as np
 
-from semantic_diff.algorithm.config import STEDConfig
-from semantic_diff.algorithm.matcher import hungarian_match
-from semantic_diff.algorithm.sted import STEDAlgorithm
-from semantic_diff.backends import StaticBackend
-from semantic_diff.cache import EmbeddingCache
-from semantic_diff.result import ComparisonResult
-from semantic_diff.tree.builder import TreeBuilder
-from semantic_diff.tree.nodes import NodeType, TreeNode
+from json_semantic_diff.algorithm.config import STEDConfig
+from json_semantic_diff.algorithm.matcher import hungarian_match
+from json_semantic_diff.algorithm.sted import STEDAlgorithm
+from json_semantic_diff.backends import StaticBackend
+from json_semantic_diff.cache import EmbeddingCache
+from json_semantic_diff.result import ComparisonResult
+from json_semantic_diff.tree.builder import TreeBuilder
+from json_semantic_diff.tree.nodes import NodeType, TreeNode
 
 if TYPE_CHECKING:
-    from semantic_diff.protocols import EmbeddingBackend
+    from json_semantic_diff.protocols import EmbeddingBackend
 
 __all__ = ["STEDComparator"]
 
@@ -58,7 +58,7 @@ class STEDComparator:
 
     Example::
 
-        from semantic_diff.comparator import STEDComparator
+        from json_semantic_diff.comparator import STEDComparator
 
         cmp = STEDComparator()
         result = cmp.compare({"user_name": "Alice"}, {"userName": "Alice"})
